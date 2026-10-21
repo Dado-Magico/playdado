@@ -683,17 +683,8 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
     },
     match: function (c) { melody(c, [523, 659, 784, 1047], 0.11, 'triangle', 0.18, 0.3); },
     win: function (c) {
-      // un "POP" di spara-coriandoli, poi il fruscio della pioggia di coriandoli
+      // fruscio della pioggia di coriandoli
       var t0 = c.currentTime + 0.05;
-      tone(c, t0, 420, 0.14, 'sine', 0.45, 110);
-      var src = c.createBufferSource(); src.buffer = noise(c);
-      var bp0 = c.createBiquadFilter(); bp0.type = 'bandpass'; bp0.frequency.value = 1800; bp0.Q.value = 0.7;
-      var g0 = c.createGain();
-      g0.gain.setValueAtTime(0.0001, t0);
-      g0.gain.exponentialRampToValueAtTime(0.4, t0 + 0.006);
-      g0.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
-      src.connect(bp0); bp0.connect(g0); g0.connect(c.destination);
-      src.start(t0, 0, 0.2);
       // fruscio continuo: si apre subito dopo il pop e si spegne piano
       var tr = t0 + 0.08, dur = 2.6;
       var s2 = c.createBufferSource(); s2.buffer = noise(c); s2.loop = true;
@@ -701,8 +692,8 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       bp.frequency.setValueAtTime(6500, tr); bp.frequency.linearRampToValueAtTime(4200, tr + dur);
       var g2 = c.createGain();
       g2.gain.setValueAtTime(0.0001, tr);
-      g2.gain.exponentialRampToValueAtTime(0.11, tr + 0.25);
-      g2.gain.exponentialRampToValueAtTime(0.05, tr + dur * 0.6);
+      g2.gain.exponentialRampToValueAtTime(0.08, tr + 0.25);
+      g2.gain.exponentialRampToValueAtTime(0.035, tr + dur * 0.6);
       g2.gain.exponentialRampToValueAtTime(0.0001, tr + dur);
       s2.connect(bp); bp.connect(g2); g2.connect(c.destination);
       s2.start(tr); s2.stop(tr + dur + 0.05);
@@ -722,28 +713,23 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       }
     },
     boom: function (c) {
-      // scoppio di fuoco d'artificio: schiocco secco di rumore, rimbombo lontano e scintille che crepitano
-      var tb = c.currentTime + 0.01, v = 0.75 + Math.random() * 0.5;
-      function nz(t, dur, type, f0, f1, q, peak, tail, loop) {
+      // scoppio ovattato e lontano: due colpi sordi ravvicinati (come un'eco) con coda bassa
+      var tb = c.currentTime + 0.01, v = 0.55 + Math.random() * 0.25;
+      function hit(t, amp, f0) {
         var src = c.createBufferSource(); src.buffer = noise(c); src.loop = true;
-        var fl = c.createBiquadFilter(); fl.type = type; fl.Q.value = q;
-        fl.frequency.setValueAtTime(f0, t);
-        if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + dur);
+        var bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.8;
+        bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f0 * 0.5, t + 0.25);
+        var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 750; lp.Q.value = 0.5;
         var g = c.createGain();
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(peak * v, t + 0.003);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-        src.connect(fl); fl.connect(g); g.connect(c.destination);
-        src.start(t, Math.random() * 0.1); src.stop(t + dur + 0.05);
+        g.gain.exponentialRampToValueAtTime(amp * v, t + 0.004);
+        g.gain.exponentialRampToValueAtTime(amp * v * 0.22, t + 0.045);   // calo rapido dopo il colpo
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);            // coda lenta
+        src.connect(bp); bp.connect(lp); lp.connect(g); g.connect(c.destination);
+        src.start(t, Math.random() * 0.1); src.stop(t + 0.6);
       }
-      nz(tb, 0.14, 'highpass', 1200, 0, 0.5, 0.55);          // schiocco
-      nz(tb, 0.45, 'lowpass', 3500, 400, 0.7, 0.35);          // corpo dello scoppio
-      nz(tb + 0.07, 1.1, 'lowpass', 600, 90, 0.5, 0.22);      // rimbombo che si allontana
-      nz(tb + 0.19, 0.8, 'lowpass', 420, 80, 0.5, 0.1);       // eco
-      for (var q = 0; q < 26; q++) {
-        var u = Math.random();
-        sfxTick(c, tb + 0.12 + u * u * 1.1, 0.04 + Math.random() * 0.08, 3000 + Math.random() * 5000);
-      }
+      hit(tb, 1.5, 300);
+      hit(tb + 0.07 + Math.random() * 0.03, 1.2, 260);
     },
     right: function (c) { melody(c, [659, 988], 0.1, 'triangle', 0.18, 0.3); },
     wrong: function (c) { tone(c, c.currentTime + 0.01, 300, 0.4, 'sine', 0.2, 150); },

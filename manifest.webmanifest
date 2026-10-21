@@ -1,0 +1,17 @@
+{
+  "name": "Dado magico",
+  "short_name": "Dado magico",
+  "description": "Un dado 3D da lanciare con uno swipe, con giochi per bambini.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#163427",
+  "theme_color": "#163427",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

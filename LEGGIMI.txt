@@ -1,0 +1,13 @@
+DADO MAGICO - app installabile (PWA)
+
+Pubblicare su GitHub Pages (organizzazione):
+1. Nell'organizzazione crea un repository pubblico, per esempio "dado-magico".
+2. Carica TUTTO il contenuto di questa cartella (index.html, manifest.webmanifest, sw.js, cartelle icons e fonts) nella radice del repository.
+3. Settings > Pages > Source: "Deploy from a branch", branch main, cartella / (root). Salva.
+4. Dopo un minuto l'app e' su https://NOME-ORGANIZZAZIONE.github.io/dado-magico/
+
+Installare su Android:
+Apri il link con Chrome > menu (tre puntini) > "Installa app" (o "Aggiungi a schermata Home").
+
+Aggiornare l'app in futuro:
+Sostituisci index.html e, in sw.js, cambia VERSION (es. 'dado-magico-v2'): i telefoni si aggiornano alla riapertura.

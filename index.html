@@ -158,6 +158,8 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
 }
 .pl.cur { border-color: var(--ink); }
 /* Corsa ad ostacoli: pedine grandi e giocose */
+.pl.tap { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.pl.tap:active { transform: scale(.94); }
 .score.big { gap: 10px; align-items: flex-end; }
 .score.big .pl { flex-direction: column; gap: 0; padding: 6px 12px 7px; min-width: 74px; justify-content: flex-end; position: relative; border-radius: 20px; font-size: 1rem; }
 .score.big .pl .animal { font-size: 2.6rem; line-height: 1.15; display: block; transition: font-size .25s; }
@@ -1234,6 +1236,17 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       chip.title = PL[i].n;
       chip.setAttribute('aria-label', PL[i].n + ' ' + txt);
       chip.appendChild(document.createTextNode(txt));
+      if (G.mode === 'percorso' && !G.over) (function (k) {
+        // toccando la pedina si apre l'elenco degli animaletti per cambiarla
+        chip.classList.add('tap');
+        chip.setAttribute('role', 'button');
+        chip.tabIndex = 0;
+        chip.setAttribute('aria-label', PL[k].n + ' ' + txt + '. Tocca per cambiare pedina');
+        chip.addEventListener('click', function (e) { e.stopPropagation(); openPicker(k); });
+        chip.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(k); }
+        });
+      })(i);
       scoreEl.appendChild(chip);
     }
   }

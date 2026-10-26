@@ -1378,7 +1378,6 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
 
   var curMove = 1, danceFor = -1, danceTimer = 0;
   function startDance(i) {
-    sfxAnimal(AN[i]);
     danceFor = i;
     renderScore();
     clearTimeout(danceTimer);
@@ -1665,6 +1664,8 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       say(PL[0].n + ' inizia. ' + msgs[G.mode]);
       curMove = randInt(1, 6);
       startDance(0);
+      // il verso del primo animaletto solo a inizio partita, e solo se l'audio e' gia' sbloccato da un tocco
+      if (audioCtx && audioCtx.state === 'running') sfxAnimal(AN[0]);
     } else {
       say('Fai scorrere il dito sul dado per lanciarlo.');
     }

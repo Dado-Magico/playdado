@@ -1,6 +1,6 @@
 // Service worker: salva i file al primo avvio così il gioco funziona anche senza internet.
 // Quando cambi qualcosa nell'app, aumenta il numero di VERSION per far aggiornare i telefoni.
-var VERSION = 'dado-magico-v10';
+var VERSION = 'dado-magico-v12';
 var FILES = [
   './', 'index.html', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png',

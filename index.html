@@ -1159,7 +1159,7 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       modesEl.appendChild(b);
       if (G.mode === m.id) modeNameEl.textContent = m.n;
     });
-    modesEl.appendChild(el('p', 'ver', 'Versione 10'));   // serve a capire quale copia del gioco e' aperta
+    modesEl.appendChild(el('p', 'ver', 'Versione 12'));   // serve a capire quale copia del gioco e' aperta
   }
 
   function setMenu(open) {
@@ -1638,11 +1638,20 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
     G.locked = false;
     updateBtn();
     startDance(G.cur);
+    voiceOnce(G.cur);
     matchPoint();
     say(PL[G.cur].n + ': scorri il dado per lanciarlo.');
   });
 
+  // ogni animaletto fa il suo verso una sola volta a partita: all'inizio il primo, gli altri al loro primo turno
+  var voiced = [];
+  function voiceOnce(i) {
+    if (voiced[i]) return;
+    voiced[i] = true;
+    sfxAnimal(AN[i]);
+  }
   function newGame() {
+    voiced = [];
     G.cur = 0; G.over = false; G.locked = false;
     hideMatchPoint();
     G.score = []; G.pos = []; G.skip = [];
@@ -1666,8 +1675,8 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       say(PL[0].n + ' inizia. ' + msgs[G.mode]);
       curMove = randInt(1, 6);
       startDance(0);
-      // il verso del primo animaletto solo a inizio partita, e solo se l'audio e' gia' sbloccato da un tocco
-      if (audioCtx && audioCtx.state === 'running') sfxAnimal(AN[0]);
+      // il verso del primo animaletto a inizio partita (solo se l'audio e' gia' sbloccato da un tocco)
+      if (audioCtx && audioCtx.state === 'running') voiceOnce(0);
     } else {
       say('Fai scorrere il dito sul dado per lanciarlo.');
     }

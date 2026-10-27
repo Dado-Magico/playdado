@@ -2,7 +2,7 @@
 // La pagina (index.html) viene sempre cercata prima in rete: se c'è internet si vede subito
 // l'ultima versione, se manca internet si usa la copia salvata.
 // Quando cambi qualcosa nell'app, aumenta il numero di VERSION.
-var VERSION = 'dado-magico-v15';
+var VERSION = 'dado-magico-v16';
 var FILES = [
   './', 'index.html', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png',

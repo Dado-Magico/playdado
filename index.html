@@ -1161,7 +1161,7 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       modesEl.appendChild(b);
       if (G.mode === m.id) modeNameEl.textContent = m.n;
     });
-    modesEl.appendChild(el('p', 'ver', 'Versione 15'));   // serve a capire quale copia del gioco e' aperta
+    modesEl.appendChild(el('p', 'ver', 'Versione 16'));   // serve a capire quale copia del gioco e' aperta
   }
 
   function setMenu(open) {
@@ -1832,6 +1832,60 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
     } catch (err) {}
   }
 
+  // Spostamento dopo scala o diavoletto: la pedina sale a balzi lungo la scala, oppure scivola
+  // a zig-zag girando su se' stessa e rimbalza all'arrivo. Restituisce la durata in ms.
+  function jumpAnim(i, from, to) {
+    var pw = pawns[i];
+    if (reduce || !pw || !pw.animate) return 0;
+    var a = pawnXY(i, from), b = pawnXY(i, to), act = pw.classList.contains('act') ? 1.25 : 1;
+    var up = to > from, frames = [];
+    function lerp(u) { return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u }; }
+    function fr(o, x, y, sc, rot, sx, sy, ease) { frames.push({ o: o, x: x, y: y, sc: sc * act, rot: rot, sx: sx, sy: sy, ease: ease || 'linear' }); }
+    var D, k, n, u, q;
+    if (up) {
+      // salita: 7 balzi, uno per piolo, con una piccola oscillazione a ogni salto
+      D = 2600; n = 7;
+      fr(0, a.x, a.y, 1, 0, 1, 1, 'ease-out');
+      for (k = 0; k < n; k++) {
+        q = lerp((k + 0.5) / n);
+        fr((k + 0.5) / n * 0.92, q.x, q.y - 20, 1.3, k % 2 ? 12 : -12, 0.92, 1.12, 'ease-in');
+        q = lerp((k + 1) / n);
+        fr((k + 1) / n * 0.92, q.x, q.y, 1, 0, 1.15, 0.8, 'ease-out');
+      }
+      // piccolo salto di gioia in cima
+      fr(0.96, b.x, b.y - 16, 1.35, 0, 0.95, 1.1, 'ease-in');
+      fr(1, b.x, b.y, 1, 0, 1, 1);
+    } else {
+      // discesa: tentenna sul bordo, poi scivola a zig-zag girando, infine rimbalza
+      D = 2400;
+      var wob = 6;
+      for (k = 0; k <= wob; k++) {
+        u = k / wob;
+        fr(u * 0.16, a.x + Math.sin(u * Math.PI * 4) * 4, a.y, 1 + 0.12 * Math.sin(u * Math.PI), Math.sin(u * Math.PI * 4) * 16, 1, 1);
+      }
+      n = 26;
+      for (k = 1; k <= n; k++) {
+        u = k / n;
+        var e = u * u * (0.4 + 0.6 * u);   // accelera scendendo
+        q = lerp(e);
+        var sway = Math.sin(u * Math.PI * 3) * 34 * (1 - u * 0.5);
+        fr(0.16 + u * 0.66, q.x + sway, q.y, 1 - 0.4 * Math.sin(u * Math.PI), u * 720, 1, 1);
+      }
+      fr(0.88, b.x, b.y - 24, 1.2, 740, 0.95, 1.1, 'ease-in');
+      fr(0.93, b.x, b.y, 1, 720, 1.25, 0.7, 'ease-out');
+      fr(0.97, b.x, b.y - 8, 1, 720, 0.97, 1.05, 'ease-in');
+      fr(1, b.x, b.y, 1, 720, 1, 1);
+    }
+    try {
+      pw.animate(frames.map(function (f) {
+        return { offset: f.o, easing: f.ease,
+          transform: 'translate(' + f.x + 'px,' + f.y + 'px) rotate(' + f.rot + 'deg) scale(' + (f.sx * f.sc) + ',' + (f.sy * f.sc) + ')' };
+      }), { duration: D });
+    } catch (err) { return 0; }
+    if (up) { for (k = 0; k < n; k++) (function (j) { setTimeout(function () { sfx('step'); }, (j + 1) / n * 0.92 * D); })(k); }
+    return D;
+  }
+
   function movePawn(i, value) {
     G.locked = true;
     updateBtn();
@@ -1865,11 +1919,14 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
         say(dest > at ? 'Scala! ' + PL[i].n + ' sale a ' + dest + '.' : 'Diavoletto! ' + PL[i].n + ' scende a ' + dest + '.');
         setTimeout(function () {
           showEvent(dest > at ? 'up' : 'down', at, dest, i, function () {
+            var from = G.pos[i];
             G.pos[i] = dest;
-            placePawns(true);
-            if (!reduce) pawns[i].style.transition = 'transform .9s ease-in-out';
+            pawns[i].style.transition = 'none';
+            placePawns(false);            // la pedina e' gia' a destinazione: l'animazione parte dalla casella di prima
+            var dur = jumpAnim(i, from, dest);
             renderScore();
-            setTimeout(function () { finish(false); }, reduce ? 60 : 1400);
+            if (dur) setTimeout(function () { stepPop(i, dest); }, dur - 300);
+            setTimeout(function () { finish(false); }, dur ? dur + 900 : 60);
           });
         }, reduce ? 60 : 500);
       } else if (REROLL.indexOf(at) !== -1) {

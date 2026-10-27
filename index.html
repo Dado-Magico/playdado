@@ -1073,11 +1073,11 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
   // ---------- Stato di gioco ----------
   // g = occhiali per la vittoria: [tipo (f = di fronte, s = di profilo), x, y, larghezza] in centesimi del corpo-emoji
   var ANIMALS = [
-    { e: '\u{1F994}', n: 'Riccio', g: ['s', 35, 58, 33] }, { e: '\u{1F98F}', n: 'Rinoceronte', g: ['s', 43, 54, 30] }, { e: '\u{1F411}', n: 'Pecora', g: ['f', 38, 33, 44] },
-    { e: '\u{1F405}', n: 'Tigre', g: ['s', 21, 40, 26] }, { e: '\u{1F402}', n: 'Bue', g: ['s', 27, 23, 27] }, { e: '\u{1F408}', n: 'Gatto', g: ['s', 41, 27, 28] },
-    { e: '\u{1F403}', n: 'Bufalo', g: ['s', 45, 39, 27] }, { e: '\u{1F9A5}', n: 'Bradipo', g: ['f', 34, 36, 35] }, { e: '\u{1F9A7}', n: 'Orango', g: ['f', 68, 25, 35] },
-    { e: '\u{1F424}', n: 'Pulcino', g: ['s', 36, 26, 26] }, { e: '\u{1F42C}', n: 'Delfino', g: ['s', 37, 20, 26] }, { e: '\u{1F99A}', n: 'Pavone', g: ['s', 59, 29, 16] },
-    { e: '\u{1F99C}', n: 'Pappagallo', g: ['s', 41, 13, 24] }, { e: '\u{1F989}', n: 'Gufo', g: ['f', 61, 29, 52] }, { e: '\u{1F981}', n: 'Leone', g: ['f', 62, 35, 49] }
+    { e: '\u{1F994}', n: 'Riccio', g: ['s', 40, 59, 33] }, { e: '\u{1F98F}', n: 'Rinoceronte', g: ['s', 48, 54, 30] }, { e: '\u{1F411}', n: 'Pecora', g: ['f', 38, 33, 41] },
+    { e: '\u{1F405}', n: 'Tigre', g: ['s', 21, 40, 26] }, { e: '\u{1F402}', n: 'Bue', g: ['s', 31, 24, 27] }, { e: '\u{1F408}', n: 'Gatto', g: ['s', 47, 26, 28] },
+    { e: '\u{1F403}', n: 'Bufalo', g: ['f', 36, 39, 35] }, { e: '\u{1F9A5}', n: 'Bradipo', g: ['f', 32, 37, 31] }, { e: '\u{1F9A7}', n: 'Orango', g: ['f', 69, 22, 24] },
+    { e: '\u{1F424}', n: 'Pulcino', g: ['s', 40, 26, 26] }, { e: '\u{1F42C}', n: 'Delfino', g: ['s', 41, 21, 26] }, { e: '\u{1F99A}', n: 'Pavone', g: ['s', 62, 30, 18] },
+    { e: '\u{1F99C}', n: 'Pappagallo', g: ['s', 43, 12, 24] }, { e: '\u{1F989}', n: 'Gufo', g: ['f', 61, 29, 52] }, { e: '\u{1F981}', n: 'Leone', g: ['f', 62, 37, 54] }
   ];
   var AN = [14, 10, 13, 0];   // pedine scelte dai 4 giocatori (indici di ANIMALS): Leone, Delfino, Gufo, Riccio
   try {
@@ -1159,7 +1159,7 @@ button:focus-visible, .stage:focus-visible { outline: 3px solid var(--pip); }
       modesEl.appendChild(b);
       if (G.mode === m.id) modeNameEl.textContent = m.n;
     });
-    modesEl.appendChild(el('p', 'ver', 'Versione 12'));   // serve a capire quale copia del gioco e' aperta
+    modesEl.appendChild(el('p', 'ver', 'Versione 14'));   // serve a capire quale copia del gioco e' aperta
   }
 
   function setMenu(open) {
